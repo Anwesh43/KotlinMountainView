@@ -4,6 +4,7 @@ package com.anwesh.uiprojects.mountainview
  * Created by anweshmishra on 04/06/18.
  */
 
+import android.app.Activity
 import android.view.View
 import android.content.Context
 import android.graphics.*
@@ -177,6 +178,14 @@ class MountainView(ctx : Context) : View(ctx) {
             mountainList.startUpdating {
                 animator.start()
             }
+        }
+    }
+
+    companion object {
+        fun create(activity : Activity) : MountainView {
+            val view : MountainView = MountainView(activity)
+            activity.setContentView(view)
+            return view
         }
     }
 }
