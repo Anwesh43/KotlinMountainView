@@ -7,6 +7,7 @@ package com.anwesh.uiprojects.mountainview
 import android.app.Activity
 import android.view.View
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.*
 import android.view.MotionEvent
 
@@ -102,12 +103,13 @@ class MountainView(ctx : Context) : View(ctx) {
             prev?.draw(canvas, paint)
             val gap : Float = canvas.width.toFloat()/(MOUNTAIN_NODES)
             val h : Float = canvas.height.toFloat()
+            val hGap : Float = 0.25f * gap
             canvas.save()
-            canvas.translate(i * gap, h + (h/20) * (1 - state.scale))
+            canvas.translate(i * gap, h + (hGap) * (1 - state.scale))
             val path : Path = Path()
             path.moveTo(0f, 0f)
-            path.lineTo(gap/10, -h/20)
-            path.lineTo(0.9f * gap, -h/20)
+            path.lineTo(gap/10, -hGap)
+            path.lineTo(0.9f * gap, -hGap)
             path.lineTo(gap, 0f)
             canvas.drawPath(path, paint)
             canvas.restore()
@@ -183,6 +185,7 @@ class MountainView(ctx : Context) : View(ctx) {
 
     companion object {
         fun create(activity : Activity) : MountainView {
+            activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
             val view : MountainView = MountainView(activity)
             activity.setContentView(view)
             return view
