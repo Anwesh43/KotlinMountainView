@@ -9,6 +9,9 @@ import android.content.Context
 import android.graphics.*
 import android.view.MotionEvent
 
+val MOUNTAIN_NODES : Int = 5
+
+
 class MountainView(ctx : Context) : View(ctx) {
 
     private val paint : Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -71,6 +74,60 @@ class MountainView(ctx : Context) : View(ctx) {
             if (animated) {
                 animated = false
             }
+        }
+    }
+
+    data class MountainNode(var i : Int, val state : State = State()) {
+
+        private var next : MountainNode? = null
+
+        private var prev : MountainNode? = null
+
+        init {
+            addNeighbor()
+        }
+
+        fun addNeighbor() {
+            if (i < MOUNTAIN_NODES - 1) {
+                next = MountainNode(i + 1)
+                next?.prev = this
+            }
+        }
+
+        fun draw(canvas : Canvas, paint : Paint) {
+            paint.color = Color.parseColor("#f39c12")
+            prev?.draw(canvas, paint)
+            val gap : Float = canvas.width.toFloat()/(MOUNTAIN_NODES)
+            val h : Float = canvas.height.toFloat()
+            canvas.save()
+            canvas.translate(i * gap, h + (h/20) * (1 - state.scale))
+            val path : Path = Path()
+            path.moveTo(0f, 0f)
+            path.lineTo(gap/10, -h/20)
+            path.lineTo(0.9f * gap, -h/20)
+            path.lineTo(gap, 0f)
+            canvas.drawPath(path, paint)
+            canvas.restore()
+        }
+
+        fun update(stopcb : (Float) -> Unit) {
+            state.update(stopcb)
+        }
+
+        fun startUpdating(startcb : () -> Unit) {
+            state.startUpdating(startcb)
+        }
+
+        fun getNext(dir : Int, cb : () -> Unit) : MountainNode {
+            var curr : MountainNode? = prev
+            if (dir == 1) {
+                curr = next
+            }
+            if (curr != null) {
+                return curr
+            }
+            cb()
+            return this
         }
     }
 }
