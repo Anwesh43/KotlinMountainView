@@ -154,4 +154,27 @@ class MountainView(ctx : Context) : View(ctx) {
             curr.startUpdating(startcb)
         }
     }
+
+    data class Renderer(var view : MountainView) {
+
+        private val animator : Animator = Animator(view)
+
+        private val mountainList : MountainList = MountainList(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(Color.parseColor("#212121"))
+            mountainList.draw(canvas, paint)
+            animator.animate {
+                mountainList.update {
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            mountainList.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
